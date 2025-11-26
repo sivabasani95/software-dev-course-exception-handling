@@ -30,43 +30,68 @@ and the program continues running as intended.
 const readlineSync = require('readline-sync');
 
 // Initial Code with Bugs (modified to use readline-sync)
-let animals = [];
-let fees = [];
+let animalRecords = {}; // Store animals as keys and fees as values
+
 function addAnimal(name, fee) {
-    if (!name || fee < 0) {
+    if (!name || isNaN(fee) || fee < 0) {
         throw new Error("Invalid animal name or adoption fee!");
     }
-    animals.push(name);
-    fees.push(fee);
+    if (animalRecords.hasOwnProperty(name)) {
+        throw new Error("Animal already exists!");
+    }
+    animalRecords[name] = fee;
 }
-function getAdoptionFee(animalName) {
-    let index = animals.indexOf(animalName);
-    if (index === -1) {
+
+function getAdoptionFee(name) {
+    if (!animalRecords.hasOwnProperty(name)) {
         throw new Error("Animal not found in records!");
     }
-    return fees[index];
+    return animalRecords[name];
+}
+
+function listAnimals() {
+    if (Object.keys(animalRecords).length === 0) {
+        console.log("No animals in the shelter currently.");
+        return;
+    }
+    console.log("Animals and their adoption fees:");
+    for (let [name, fee] of Object.entries(animalRecords)) {
+        console.log(`- ${name}: $${fee}`);
+    }
 }
 // Main program
 console.log("Welcome to the Pet Shelter System");
+
 while (true) {
-    let action = readlineSync.question("Choose an action: 'add', 'fee', or 'exit': ").toLowerCase();
+    let action = readlineSync.question("Choose an action: 'add', 'fee', 'list', or 'exit': ").toLowerCase();
+    
     if (action === "exit") {
         console.log("Goodbye!");
         break;
-    }
+    } 
+    
     if (action === "add") {
         let animal = readlineSync.question("Enter the animal's name: ");
         let fee = Number(readlineSync.question("Enter the adoption fee: "));
-        addAnimal(animal, fee);
-        console.log(`${animal} added with a fee of $${fee}.`);
+        try {
+            addAnimal(animal, fee);
+            console.log(`${animal} added with a fee of $${fee}.`);
+        } catch (err) {
+            console.log("Error:", err.message);
+        }
     } else if (action === "fee") {
         let animal = readlineSync.question("Enter the animal's name to find its adoption fee: ");
-        console.log(`${animal}'s adoption fee is $${getAdoptionFee(animal)}.`);
+        try {
+            console.log(`${animal}'s adoption fee is $${getAdoptionFee(animal)}.`);
+        } catch (err) {
+            console.log("Error:", err.message);
+        }
+    } else if (action === "list") {
+        listAnimals();
     } else {
-        console.log("Invalid action. Please choose 'add', 'fee', or 'exit'.");
+        console.log("Invalid action. Please choose 'add', 'fee', 'list', or 'exit'.");
     }
 }
-
 
 
 /*
