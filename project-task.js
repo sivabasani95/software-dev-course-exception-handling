@@ -75,10 +75,17 @@ Problems to Solve
 Invalid Input Errors:
   What happens if the user provides a negative adoption fee or leaves the name blank?
   What happens if the user tries to find the fee for an animal that hasn’t been added?
+  
+// Invalid input isn’t handled – negative fees or blank names will throw errors and crash the program.
 
 Code Flow Problems:
   What happens if the program throws an exception? Does the rest of the code continue running?
 
+// Looking up a non-existent animal – will throw an uncaught error and terminate the program.
+
 Structured Exception Handling:
   Add try/catch blocks to handle the above errors gracefully.
+
+  // No try/catch around the main logic – so any exception stops the whole program.
+  
 */
